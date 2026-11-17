@@ -137,7 +137,7 @@ what the tests cover (`tests/test_app.py`):
 - `checks`: python 3.12, `pip install -r requirements.txt` (same pins as here), `ruff check`, `ruff format --check`, `pytest`.
 - `container` (after checks pass): `docker build`, start the container, wait for `/health`, valid request must be 200 with the hw4 model version, a bad request must be 422, and docker has to report the container `healthy`. container logs get printed either way.
 
-run on my fork: TODO: paste the actions run link here after pushing
+run on my fork (both jobs green, commit `2c87fff`): https://github.com/DNR07/UCB-MFE-python-preprogram-2026-winter/actions/runs/44025903481
 
 ## latency
 

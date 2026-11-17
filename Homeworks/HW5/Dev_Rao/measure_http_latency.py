@@ -42,7 +42,9 @@ def main(warmup: int = 20, n: int = 200):
         "client_machine": f"{platform.processor()} | {platform.system()} {platform.release()}",
     }
     (HERE / "evidence").mkdir(exist_ok=True)
-    (HERE / "evidence" / "latency_http_container.json").write_text(json.dumps(report, indent=2) + "\n")
+    (HERE / "evidence" / "latency_http_container.json").write_text(
+        json.dumps(report, indent=2) + "\n"
+    )
     print(json.dumps(report, indent=2))
 
 

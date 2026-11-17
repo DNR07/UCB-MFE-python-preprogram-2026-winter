@@ -122,7 +122,7 @@ the service itself never touches the hw4 database. it only loads `artifacts/`.
 
 ## tests and lint
 
-`python -m ruff check .` -> All checks passed. `python -m ruff format --check .` -> 6 files already formatted. `python -m pytest -q` -> **33 passed**. full output in `evidence/checks.txt`. the one warning is starlette saying the template's pinned `httpx` is deprecated for TestClient. harmless, and i kept the template pin.
+`python -m ruff check .` -> All checks passed. `python -m ruff format --check .` -> 8 files already formatted. `python -m pytest -q` -> **33 passed**. full output in `evidence/checks.txt`. the one warning is starlette saying the template's pinned `httpx` is deprecated for TestClient. harmless, and i kept the template pin.
 
 what the tests cover (`tests/test_app.py`):
 1. **valid:** 200, exact schema, finite, in [-0.5, 0.5], right model_version. api prediction == a direct `joblib.load` + `pipeline.predict` call (abs 1e-12, same float64 path). the model received one row with the 15 training columns in order. plus all 4 hw4 reference cases (abs 1e-7, see above), including rows with 7 and 2 nulls, null handling, json key order not mattering, and `/health`.
@@ -145,10 +145,10 @@ my machine: Intel Core Ultra 7 256V (8 cores), 16 GB RAM, Windows 11, Python 3.1
 
 | measurement | n | median | p95 | max |
 |---|---:|---:|---:|---:|
-| in-process `TestClient` (no network, no uvicorn), `test_predict_performance` | 200 | 5.6 ms | 9.0 ms | 41.6 ms |
+| in-process `TestClient` (no network, no uvicorn), `test_predict_performance` | 200 | 4.2 ms | 5.1 ms | 35.9 ms |
 | **real localhost HTTP** to the docker container, httpx keep-alive, `measure_http_latency.py` | 200 | 5.3 ms | 6.5 ms | 11.4 ms |
 
-files: `evidence/latency_testclient.json`, `evidence/latency_http_container.json`. in-process numbers move between runs (4.3 ms median / 5.1 ms p95 on another run). most of the time is pandas building a one-row DataFrame plus FastAPI/pydantic overhead, not the model. the test asserts p95 < 100 ms. that's ~10-20x what i measure, and it's only there to catch something pathological like reloading or refitting the model on every request. it's not a real SLA.
+files: `evidence/latency_testclient.json`, `evidence/latency_http_container.json`. in-process numbers move between runs (5.6 ms median / 9.0 ms p95 on another run with `-v`). most of the time is pandas building a one-row DataFrame plus FastAPI/pydantic overhead, not the model. the test asserts p95 < 100 ms. that's ~10-20x what i measure, and it's only there to catch something pathological like reloading or refitting the model on every request. it's not a real SLA.
 
 ## docker
 
